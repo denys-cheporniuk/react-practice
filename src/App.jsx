@@ -20,12 +20,28 @@ const products = productsFromServer.map((product) => {
 export const App = () => {
   const [visibleProducts, setVisibleProducts] = useState([...products]);
   const [activeUserId, serActiveUserId] = useState(0);
+  const [searchParam, setSearchParam] = useState('');
+
+  const handlerInput = (value) => {
+    setSearchParam(value);
+    setVisibleProducts(products.filter((product) => {
+      const searchValue = value.toLowerCase();
+      const productName = product.name.toLowerCase();
+
+      return productName.includes(searchValue);
+    }));
+  };
+
+  const clearInput = () => {
+    setSearchParam('');
+  };
+
   const filterByName = (personId) => {
     serActiveUserId(personId);
     setVisibleProducts(products.filter(product => product.user.id === personId));
   };
 
-  const clenFilter = () => {
+  const clearFilter = () => {
     serActiveUserId(0);
     setVisibleProducts([...products]);
   };
@@ -47,7 +63,7 @@ export const App = () => {
                   'is-active': activeUserId === 0,
                 })}
                 onClick={() => {
-                  clenFilter();
+                  clearFilter();
                 }}
               >
                 All
@@ -77,21 +93,31 @@ export const App = () => {
                   type="text"
                   className="input"
                   placeholder="Search"
-                  value="qwe"
+                  value={searchParam}
+                  onChange={(event) => {
+                    handlerInput(event.target.value);
+                  }
+                  }
                 />
 
                 <span className="icon is-left">
                   <i className="fas fa-search" aria-hidden="true" />
                 </span>
 
-                <span className="icon is-right">
-                  {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
-                  <button
-                    data-cy="ClearButton"
-                    type="button"
-                    className="delete"
-                  />
-                </span>
+                {searchParam.length > 0 && (
+                  <span className="icon is-right">
+                    {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
+                    <button
+                      data-cy="ClearButton"
+                      type="button"
+                      className="delete"
+                      onClick={() => {
+                        clearInput();
+                      }
+                      }
+                    />
+                  </span>
+                )}
               </p>
             </div>
 
