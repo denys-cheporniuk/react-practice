@@ -16,8 +16,12 @@ const products = productsFromServer.map((product) => {
   };
 });
 
-// const filteredPoduct = product.filter(product => product.user.id === );
-// console.log(filterUsers);
+let visibleProducts = [...products];
+
+const filteredByName = userId => {
+  let filteredProducts = products.filter(pt => pt.user.id === userId);
+  visibleProducts = filteredProducts;
+};
 
 export const App = () => (
   <div className="section">
@@ -61,6 +65,8 @@ export const App = () => (
            <a
            data-cy="FilterUser"
            href="#/"
+          //  onClick={ filteredByName(user.name) }
+          
          >
            {user.name}
          </a>
@@ -208,7 +214,7 @@ export const App = () => (
           </thead>
 
           <tbody>
-          {products.map((product) => (
+          {visibleProducts.map((product) => (
             <tr data-cy="Product">
             <td
               className="has-text-weight-bold"
