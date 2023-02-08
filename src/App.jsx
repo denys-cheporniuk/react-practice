@@ -30,8 +30,6 @@ const products = productsFromServer.map(product => ({
   category: getCategoryById(product.categoryId),
 }));
 
-// const avaibleCategory = categoriesFromServer.map(category => category.title);
-
 export const App = () => {
   const [selectedUser, setSelectedUser] = useState('All');
   const [query, setQuery] = useState('');
@@ -82,9 +80,6 @@ export const App = () => {
   const resetSelectedCategory = () => {
     setSelectedCategory([]);
   };
-
-  // eslint-disable-next-line no-console
-  console.log(selectedCategories);
 
   visibleProducts = visibleProducts.filter(product => (
     selectedCategories.length === 0 || selectedCategories.includes(product.category.title)
