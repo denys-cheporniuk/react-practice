@@ -39,19 +39,27 @@ export const App = () => {
   const [query, setQuery] = useState('');
   const adaptedQuery = query.toLocaleLowerCase().trim();
 
-  let visibleProducts = products;
 
-  if (selectedUser.length !== 0) {
-    visibleProducts = products.filter(product => (
-      selectedUser.id === product.user.id
-    ));
-  }
 
-  if (query !== '') {
-    visibleProducts = products.filter(product => (
-      product.name.toLocaleLowerCase().includes(adaptedQuery)
-    ));
-  }
+  const prepareProducts = () => {
+    let prepared = products;
+
+    if (selectedUser.length !== 0) {
+      prepared = products.filter(product => (
+        selectedUser.id === product.user.id
+      ));
+    }
+
+    if (query !== '') {
+      prepared = products.filter(product => (
+        product.name.toLocaleLowerCase().includes(adaptedQuery)
+      ));
+    }
+
+    return prepared;
+  };
+
+  const visibleProducts = prepareProducts();
 
   const resetAllFilters = () => {
     setSelectedUser([]);
