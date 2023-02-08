@@ -2,7 +2,7 @@
 
 > Here is [the working version](https://mate-academy.github.io/react_product-categories-practice/)
 
-You are given markup for a table of products and 3 arrays. 
+You are given markup for a table of products and 3 arrays.
 Implement as much options below as you can:
 
 1. Render products in a table with id, name, category and an owner (user).
@@ -28,12 +28,12 @@ Implement as much options below as you can:
     - the first click sorts products by the given column ascending and use `fa-sort-up` icon;
     - the second click sorts products in the descending order and use `fa-sort-down` icon;
     - the third click disables sorting;
-    - products are sorted by 1 column at a time (reset the column title when clicking on the other one)
+    - products are sorted by 1 column at a ti6me (reset the column title when clicking on the other one)
 
 ## Instructions
 - Fork, clone and run `npm i`
 - fix the DEMO LINK below (use your github username and the repo name)
-  - [DEMO LINK](https://<your-account>.github.io/<your-repo-name>)
+  - [DEMO LINK](https://nkondd.github.io/react_product-categories-practice/)
 - implement tasks one by one (You can do it in the `App.jsx`)
 - `commit`, `push` and `deploy` after each task
 - Send a link to your `App.jsx` file to your personal Slack channel (for example #fe_apr22_misha_hrynko)
