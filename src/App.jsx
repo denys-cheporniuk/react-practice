@@ -34,6 +34,7 @@ export const App = () => {
   const [selectedUser, setSelectedUser] = useState('All');
   const [query, setQuery] = useState('');
   const [selectedCategories, setSelectedCategory] = useState([]);
+  const [sortBy, setSortBy] = useState('');
 
   const selectNewUser = (userName) => {
     setSelectedUser(userName);
@@ -85,10 +86,30 @@ export const App = () => {
     selectedCategories.length === 0 || selectedCategories.includes(product.category.title)
   ));
 
+  const handleSortBy = (sortField) => {
+    setSortBy(sortField);
+  };
+
+  visibleProducts = visibleProducts.sort((productA, productB) => {
+    switch (sortBy) {
+      case 'id':
+        return productA.id - productB.id;
+      case 'product':
+        return productA.name.localeCompare(productB.name);
+      case 'category':
+        return productA.category.title.localeCompare(productB.category.title);
+      case 'user':
+        return productA.category.owner.name.localeCompare(productB.category.owner.name);
+      default:
+        return 0;
+    }
+  });
+
   const resetAllFilters = () => {
     resetQuery();
     setSelectedUser('All');
     resetSelectedCategory();
+    setSortBy('');
   };
 
   return (
@@ -211,9 +232,19 @@ export const App = () => {
                       <span className="is-flex is-flex-wrap-nowrap">
                         ID
 
-                        <a href="#/">
+                        <a
+                          href="#/"
+                          onClick={() => handleSortBy('id')}
+                        >
                           <span className="icon">
-                            <i data-cy="SortIcon" className="fas fa-sort" />
+                            <i
+                              data-cy="SortIcon"
+                              className={classNames(
+                                'fas',
+                                { 'fa-sort': sortBy !== 'id' },
+                              )}
+                              // className="fas fa-sort"
+                            />
                           </span>
                         </a>
                       </span>
@@ -223,9 +254,19 @@ export const App = () => {
                       <span className="is-flex is-flex-wrap-nowrap">
                         Product
 
-                        <a href="#/">
+                        <a
+                          href="#/"
+                          onClick={() => handleSortBy('product')}
+                        >
                           <span className="icon">
-                            <i data-cy="SortIcon" className="fas fa-sort-down" />
+                            <i
+                              data-cy="SortIcon"
+                              className={classNames(
+                                'fas',
+                                { 'fa-sort': sortBy !== 'product' },
+                              )}
+                              // className="fas fa-sort-down"
+                            />
                           </span>
                         </a>
                       </span>
@@ -235,9 +276,19 @@ export const App = () => {
                       <span className="is-flex is-flex-wrap-nowrap">
                         Category
 
-                        <a href="#/">
+                        <a
+                          href="#/"
+                          onClick={() => handleSortBy('category')}
+                        >
                           <span className="icon">
-                            <i data-cy="SortIcon" className="fas fa-sort-up" />
+                            <i
+                              data-cy="SortIcon"
+                              className={classNames(
+                                'fas',
+                                { 'fa-sort': sortBy !== 'category' },
+                              )}
+                              // className="fas fa-sort-up"
+                            />
                           </span>
                         </a>
                       </span>
@@ -247,9 +298,19 @@ export const App = () => {
                       <span className="is-flex is-flex-wrap-nowrap">
                         User
 
-                        <a href="#/">
+                        <a
+                          href="#/"
+                          onClick={() => handleSortBy('user')}
+                        >
                           <span className="icon">
-                            <i data-cy="SortIcon" className="fas fa-sort" />
+                            <i
+                              data-cy="SortIcon"
+                              className={classNames(
+                                'fas',
+                                { 'fa-sort': sortBy !== 'user' },
+                              )}
+                              // className="fas fa-sort"
+                            />
                           </span>
                         </a>
                       </span>
