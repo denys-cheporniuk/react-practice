@@ -1,16 +1,24 @@
 import React from 'react';
 import './App.scss';
 
-// import usersFromServer from './api/users';
-// import categoriesFromServer from './api/categories';
-// import productsFromServer from './api/products';
+import usersFromServer from './api/users';
+import categoriesFromServer from './api/categories';
+import productsFromServer from './api/products';
 
-// const products = productsFromServer.map((product) => {
-//   const category = null; // find by product.categoryId
-//   const user = null; // find by category.ownerId
+const products = productsFromServer.map((product) => {
+  const foundCategory = categoriesFromServer.find(category => (
+    category.id === product.categoryId
+  )) || null;
+  const foundUser = usersFromServer.find(user => (
+    user.id === foundCategory.ownerId
+  )) || null;
 
-//   return null;
-// });
+  return {
+    ...product,
+    category: foundCategory,
+    user: foundUser,
+  };
+});
 
 export const App = () => (
   <div className="section">
@@ -192,53 +200,39 @@ export const App = () => (
           </thead>
 
           <tbody>
-            <tr data-cy="Product">
-              <td className="has-text-weight-bold" data-cy="ProductId">
-                1
-              </td>
 
-              <td data-cy="ProductName">Milk</td>
-              <td data-cy="ProductCategory">🍺 - Drinks</td>
+            {products.map((product) => {
+              const { id, name, category, user } = product;
 
-              <td
-                data-cy="ProductUser"
-                className="has-text-link"
-              >
-                Max
-              </td>
-            </tr>
+              return (
+                <tr
+                  key={id}
+                  data-cy="Product"
+                >
+                  <td className="has-text-weight-bold" data-cy="ProductId">
+                    {id}
+                  </td>
 
-            <tr data-cy="Product">
-              <td className="has-text-weight-bold" data-cy="ProductId">
-                2
-              </td>
+                  <td data-cy="ProductName">
+                    {name}
+                  </td>
+                  <td data-cy="ProductCategory">
+                    {`${category.icon} - ${category.title}`}
+                  </td>
 
-              <td data-cy="ProductName">Bread</td>
-              <td data-cy="ProductCategory">🍞 - Grocery</td>
-
-              <td
-                data-cy="ProductUser"
-                className="has-text-danger"
-              >
-                Anna
-              </td>
-            </tr>
-
-            <tr data-cy="Product">
-              <td className="has-text-weight-bold" data-cy="ProductId">
-                3
-              </td>
-
-              <td data-cy="ProductName">iPhone</td>
-              <td data-cy="ProductCategory">💻 - Electronics</td>
-
-              <td
-                data-cy="ProductUser"
-                className="has-text-link"
-              >
-                Roma
-              </td>
-            </tr>
+                  <td
+                    data-cy="ProductUser"
+                    className={
+                      user.sex === 'm'
+                        ? 'has-text-link'
+                        : 'has-text-danger'
+                    }
+                  >
+                    {user.name}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
