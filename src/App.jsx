@@ -24,6 +24,18 @@ export const App = () => {
   const [selectedUser, setSelectedUser] = useState(0);
   const [searchValue, setSearchValue] = useState('');
   const [selectedCategories, setSelectedCategories] = useState([]);
+  const [sortBy, setSortBy] = useState('id');
+  const [sortType, setSortType] = useState(0);
+
+  const handeSortProducts = (byName) => {
+    if (sortBy === byName && sortType < 2) {
+      setSortType(prevSortType => prevSortType + 1);
+    } else {
+      setSortType(0);
+    }
+
+    setSortBy(byName);
+  };
 
   const handleSelectCategory = (categoryId) => {
     if (selectedCategories.includes(categoryId)) {
@@ -73,6 +85,41 @@ export const App = () => {
         selectedCategories.some(categoryId => categoryId === product.categoryId)
       ));
     }
+
+    preparedProducts.sort((a, b) => {
+      switch (sortType) {
+        case 1:
+          if (sortBy === 'id') {
+            return a[sortBy] - b[sortBy];
+          }
+
+          if (sortBy === 'category') {
+            return a[sortBy].title.localeCompare(b[sortBy].title);
+          }
+
+          if (sortBy === 'user') {
+            return a[sortBy].name.localeCompare(b[sortBy].name);
+          }
+
+          return a[sortBy].localeCompare(b[sortBy]);
+        case 2:
+          if (sortBy === 'id') {
+            return b[sortBy] - a[sortBy];
+          }
+
+          if (sortBy === 'category') {
+            return b[sortBy].title.localeCompare(a[sortBy].title);
+          }
+
+          if (sortBy === 'user') {
+            return b[sortBy].name.localeCompare(a[sortBy].name);
+          }
+
+          return b[sortBy].localeCompare(a[sortBy]);
+        default:
+          return 0;
+      }
+    });
 
     return preparedProducts;
   };
@@ -206,9 +253,25 @@ export const App = () => {
                       <span className="is-flex is-flex-wrap-nowrap">
                         ID
 
-                        <a href="#/">
+                        <a
+                          href="#/"
+                          onClick={() => handeSortProducts('id')}
+                        >
                           <span className="icon">
-                            <i data-cy="SortIcon" className="fas fa-sort" />
+                            <i
+                              data-cy="SortIcon"
+                              className={cn(
+                                'fas',
+                                {
+                                  'fa-sort': (sortBy !== 'id'
+                                    || sortType === 0),
+                                  'fa-sort-up': sortBy === 'id'
+                                    && sortType === 1,
+                                  'fa-sort-down': sortBy === 'id'
+                                    && sortType === 2,
+                                },
+                              )}
+                            />
                           </span>
                         </a>
                       </span>
@@ -218,11 +281,24 @@ export const App = () => {
                       <span className="is-flex is-flex-wrap-nowrap">
                         Product
 
-                        <a href="#/">
+                        <a
+                          href="#/"
+                          onClick={() => handeSortProducts('name')}
+                        >
                           <span className="icon">
                             <i
                               data-cy="SortIcon"
-                              className="fas fa-sort-down"
+                              className={cn(
+                                'fas',
+                                {
+                                  'fa-sort': (sortBy !== 'name'
+                                    || sortType === 0),
+                                  'fa-sort-up': sortBy === 'name'
+                                    && sortType === 1,
+                                  'fa-sort-down': sortBy === 'name'
+                                    && sortType === 2,
+                                },
+                              )}
                             />
                           </span>
                         </a>
@@ -233,9 +309,25 @@ export const App = () => {
                       <span className="is-flex is-flex-wrap-nowrap">
                         Category
 
-                        <a href="#/">
+                        <a
+                          href="#/"
+                          onClick={() => handeSortProducts('category')}
+                        >
                           <span className="icon">
-                            <i data-cy="SortIcon" className="fas fa-sort-up" />
+                            <i
+                              data-cy="SortIcon"
+                              className={cn(
+                                'fas',
+                                {
+                                  'fa-sort': (sortBy !== 'category'
+                                    || sortType === 0),
+                                  'fa-sort-up': sortBy === 'category'
+                                    && sortType === 1,
+                                  'fa-sort-down': sortBy === 'category'
+                                    && sortType === 2,
+                                },
+                              )}
+                            />
                           </span>
                         </a>
                       </span>
@@ -245,9 +337,25 @@ export const App = () => {
                       <span className="is-flex is-flex-wrap-nowrap">
                         User
 
-                        <a href="#/">
+                        <a
+                          href="#/"
+                          onClick={() => handeSortProducts('user')}
+                        >
                           <span className="icon">
-                            <i data-cy="SortIcon" className="fas fa-sort" />
+                            <i
+                              data-cy="SortIcon"
+                              className={cn(
+                                'fas',
+                                {
+                                  'fa-sort': (sortBy !== 'user'
+                                    || sortType === 0),
+                                  'fa-sort-up': sortBy === 'user'
+                                    && sortType === 1,
+                                  'fa-sort-down': sortBy === 'user'
+                                    && sortType === 2,
+                                },
+                              )}
+                            />
                           </span>
                         </a>
                       </span>
