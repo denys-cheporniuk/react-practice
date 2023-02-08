@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.scss';
-import { useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 
 import usersFromServer from './api/users';
 import categoriesFromServer from './api/categories';
@@ -28,6 +28,14 @@ const filteredByName = userId => {
   const filteredProducts = products.filter(pt => pt.user[0].id === userId);
   setVisibleProducts(filteredProducts);
 };
+
+const handleInput = (event: ChangeEvent) => {
+  const productName = event.target.value;
+
+  const filteredProducts = products.filter(pt => pt.product.name.toLowerCase().includes(productName.toLowerCase()) );
+
+  setVisibleProducts(filteredProducts);
+}
 
 return (
   <div className="section">
@@ -86,7 +94,8 @@ return (
                 type="text"
                 className="input"
                 placeholder="Search"
-                value="qwe"
+                // value="qwe"
+                onChange={handleInput}
               />
 
               <span className="icon is-left">
