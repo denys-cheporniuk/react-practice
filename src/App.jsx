@@ -41,20 +41,19 @@ export const App = () => {
     setQuery('');
   };
 
-  const filteredProductsByUser = products.filter((product) => {
-    if (selectedUserId) {
-      return product.user.id === selectedUserId;
-    }
-
-    return product;
-  }) || null;
+  const filteredProductsByUser = products.filter(product => (
+    (selectedUserId)
+      ? product.user.id === selectedUserId
+      : product
+  )) || null;
 
   const searchedProducts = filteredProductsByUser.filter((product) => {
-    if (query) {
-      return (product.name.toLowerCase().includes(query.toLowerCase()));
-    }
+    const lowerName = product.name.toLowerCase();
+    const lowerQuery = query.toLowerCase();
 
-    return product;
+    return (query)
+      ? lowerName.includes(lowerQuery)
+      : product;
   }) || null;
 
   return (
