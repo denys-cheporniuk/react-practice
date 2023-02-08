@@ -32,6 +32,12 @@ export const App = () => {
     setSearchQuery(event.target.value);
   };
 
+  const resetAllFilters = () => {
+    setCurrentUserName('');
+    setSearchQuery('');
+    setSelectedCategory([]);
+  };
+
   const toogleSelectedCategory = (categoryTitle) => {
     if (selectedCategory.includes(categoryTitle)) {
       setSelectedCategory(
@@ -157,6 +163,7 @@ export const App = () => {
                 data-cy="ResetAllButton"
                 href="#/"
                 className="button is-link is-outlined is-fullwidth"
+                onClick={resetAllFilters}
               >
                 Reset all filters
               </a>
