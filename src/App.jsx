@@ -34,7 +34,7 @@ export const App = () => {
   const loweredQuery = query.toLowerCase();
 
   const filteredProducts = products.filter(({ name, user, category }) => {
-    const passesSearch = `${name}${user.name}${category.title}`
+    const passesSearch = `${name} ${user.name} ${category.title}`
       .toLowerCase()
       .includes(loweredQuery);
 
