@@ -22,23 +22,45 @@ export const App = () => {
   const [activeUserId, serActiveUserId] = useState(0);
   const [searchParam, setSearchParam] = useState('');
 
-  const handlerInput = (value) => {
-    setSearchParam(value);
-    setVisibleProducts(visibleProducts.filter((product) => {
+  const searchByProductName = (value) => {
+    let productToFilter = [...products];
+
+    if (activeUserId !== 0) {
+      productToFilter = productToFilter.filter(p => p.user.id === activeUserId);
+    }
+
+    return productToFilter.filter((product) => {
       const searchValue = value.toLowerCase();
       const productName = product.name.toLowerCase();
 
       return productName.includes(searchValue);
-    }));
+    });
+  };
+
+  const handlerInput = (value) => {
+    setSearchParam(value);
+    setVisibleProducts(searchByProductName(value));
   };
 
   const clearInput = () => {
     setSearchParam('');
+    setVisibleProducts([...products]);
   };
 
   const filterByName = (personId) => {
+    let productsToFilter = [...products];
+
+    if (searchParam.length > 0) {
+      productsToFilter = productsToFilter.filter((product) => {
+        const searchValue = searchParam.toLowerCase();
+        const productName = product.name.toLowerCase();
+
+        return productName.includes(searchValue);
+      });
+    }
+
     serActiveUserId(personId);
-    setVisibleProducts(products.filter(product => product.user.id === personId));
+    setVisibleProducts(productsToFilter.filter(product => product.user.id === personId));
   };
 
   const clearFilter = () => {
