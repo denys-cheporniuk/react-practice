@@ -23,6 +23,25 @@ export const App = () => {
   const [query, setQuery] = useState('');
   const [selectedUser, setSelectedUser] = useState(0);
 
+  const preparedProducts = (product) => {
+    let copy = [...product];
+
+    if (selectedUser) {
+      copy = copy.filter(productCopy => productCopy.users.id === selectedUser);
+    }
+
+    if (query) {
+      copy = copy.filter((productCopy) => {
+        const productName = productCopy.name.toLowerCase();
+        const lowerQuery = query.toLowerCase().trim();
+
+        return productName.includes(lowerQuery);
+      });
+    }
+
+    return copy;
+  };
+
   const handleQueryInput = (event) => {
     setQuery(event.target.value);
   };
@@ -31,18 +50,16 @@ export const App = () => {
     setQuery('');
   };
 
-  const selectUser = () => {
-    setSelectedUser(true);
-  };
-
   const clearSelected = () => {
-    setSelectedUser();
+    setSelectedUser(0);
   };
 
   const clearAllFilters = () => {
     setQuery('');
     setSelectedUser(0);
   };
+
+  const filteredProducts = preparedProducts(products);
 
   return (
     <div className="section">
@@ -57,6 +74,9 @@ export const App = () => {
               <a
                 data-cy="FilterAllUsers"
                 href="#/"
+                className={classNames({
+                  'is-active': !selectedUser,
+                })}
                 onClick={clearSelected}
               >
                 All
@@ -71,7 +91,7 @@ export const App = () => {
                   })}
                   value={user.id}
                   key={user.id}
-                  onClick={selectUser}
+                  onClick={() => setSelectedUser(user.id)}
                 >
                   {user.name}
                 </a>
@@ -162,9 +182,11 @@ export const App = () => {
         </div>
 
         <div className="box table-container">
-          <p data-cy="NoMatchingMessage">
-            No products matching selected criteria
-          </p>
+          {filteredProducts.length === 0 && (
+            <p data-cy="NoMatchingMessage">
+              No products matching selected criteria
+            </p>
+          )}
 
           <table
             data-cy="ProductTable"
@@ -223,7 +245,7 @@ export const App = () => {
             </thead>
 
             <tbody>
-              {products.map(product => (
+              {filteredProducts.map(product => (
                 <tr data-cy="Product">
                   <td className="has-text-weight-bold" data-cy="ProductId">
                     {product.id}
