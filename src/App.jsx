@@ -40,7 +40,7 @@ export const App = () => {
     setQuery('');
   };
 
-  const filterByName = (personId) => {
+  const filterBy = (personId) => {
     setActiveUser(personId);
     setVisibleProducts(
       products.filter(product => product.user.id === personId),
@@ -75,19 +75,19 @@ export const App = () => {
                 All
               </a>
 
-              {usersFromServer.map(user => (
+              {usersFromServer.map(({ id, name }) => (
                 <a
-                  key={user.id}
+                  key={id}
                   data-cy="FilterUser"
                   className={cn({
-                    'is-active': activeUser === user.id,
+                    'is-active': activeUser === id,
                   })}
                   href="#/"
                   onClick={() => {
-                    filterByName(user.id);
+                    filterBy(id);
                   }}
                 >
-                  {user.name}
+                  {name}
                 </a>
               ))}
             </p>
