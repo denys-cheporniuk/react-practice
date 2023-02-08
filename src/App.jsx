@@ -24,21 +24,20 @@ export const App = () => {
   const [categories, setCategories] = useState([]);
 
   const filterByCategories = (id) => {
-    setCategories(prevState => ([...prevState, id]));
-    // eslint-disable-next-line no-console
-    console.log(categories);
-
+    setCategories(prevState => [...prevState, id]);
     setVisibleProducts([...products]
       .filter(product => product.category.id === categories
-        .find(c => c === id)));
+        .find(c => c.id === product.category.id)));
   };
 
   const searchByProductName = (value) => {
+    let productsToFilter = [...products];
+
     if (activeUserId !== 0) {
-      filterByName(activeUserId);
+      productsToFilter = productsToFilter.filter(product => product.user.id === activeUserId);
     }
 
-    return visibleProducts.filter((product) => {
+    return productsToFilter.filter((product) => {
       const searchValue = value.toLowerCase();
       const productName = product.name.toLowerCase();
 
@@ -179,6 +178,29 @@ export const App = () => {
                   {category.title}
                 </a>
               ))}
+
+              <a
+                data-cy="Category"
+                className="button mr-2 my-1"
+                href="#/"
+              >
+                Category 2
+              </a>
+
+              <a
+                data-cy="Category"
+                className="button mr-2 my-1 is-info"
+                href="#/"
+              >
+                Category 3
+              </a>
+              <a
+                data-cy="Category"
+                className="button mr-2 my-1"
+                href="#/"
+              >
+                Category 4
+              </a>
             </div>
 
             <div className="panel-block">
