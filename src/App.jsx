@@ -1,9 +1,11 @@
 import React from 'react';
 import './App.scss';
+import { useState } from 'react';
 
 import usersFromServer from './api/users';
 import categoriesFromServer from './api/categories';
 import productsFromServer from './api/products';
+
 
 const products = productsFromServer.map((product) => {
   const category = categoriesFromServer.filter(cat => cat.id === product.categoryId);
@@ -16,14 +18,18 @@ const products = productsFromServer.map((product) => {
   };
 });
 
-let visibleProducts = [...products];
+
+
+export const App = () => {
+
+const [visibleProducts, setVisibleProducts] = useState(products);
 
 const filteredByName = userId => {
-  let filteredProducts = products.filter(pt => pt.user.id === userId);
-  visibleProducts = filteredProducts;
+  const filteredProducts = products.filter(pt => pt.user[0].id === userId);
+  setVisibleProducts(filteredProducts);
 };
 
-export const App = () => (
+return (
   <div className="section">
     <div className="container">
       <h1 className="title">Product Categories</h1>
@@ -61,12 +67,11 @@ export const App = () => (
             >
               User 3
             </a> */}
-              {usersFromServer.map((user) => (
+          {usersFromServer.map((user) => (
            <a
            data-cy="FilterUser"
            href="#/"
-          //  onClick={ filteredByName(user.name) }
-          
+           onClick={() => filteredByName(user.id)}
          >
            {user.name}
          </a>
@@ -288,3 +293,4 @@ export const App = () => (
     </div>
   </div>
 );
+};
