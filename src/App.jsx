@@ -1,19 +1,51 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './App.scss';
 
-// import usersFromServer from './api/users';
-// import categoriesFromServer from './api/categories';
-// import productsFromServer from './api/products';
+import usersFromServer from './api/users';
+import categoriesFromServer from './api/categories';
+import productsFromServer from './api/products';
+import classNames from 'classnames';
 
-// const products = productsFromServer.map((product) => {
-//   const category = null; // find by product.categoryId
-//   const user = null; // find by category.ownerId
+function getUserId(ownerId) {
+  const foundUser = usersFromServer.find(user => user.id === ownerId);
 
-//   return null;
-// });
+  return foundUser || null;
+}
 
-export const App = () => (
-  <div className="section">
+function getCategoryId(categoryId) {
+  const foundCategory = categoriesFromServer.find(category => category.id === categoryId);
+
+  return foundCategory || null;
+}
+
+const products = productsFromServer.map((product) => {
+  const category = getCategoryId(product.categoryId);
+  const user = getUserId(category.ownerId);
+
+  return {
+    ...product,
+    category, 
+    user,
+  }
+});
+
+export const App = () => {
+  const [selectedUser, setSelectedUser] = useState([]);
+  const [query, setQuery] = useState('');
+
+  let visibleProducts = products;
+
+  if (selectedUser.length !== 0) {
+    visibleProducts = visibleProducts.filter(product => product.user.id = selectedUser.id)
+  }
+
+  const resetFilters = () => {
+    setSelectedUser([]);
+    setQuery('');
+  }
+  
+  return (
+    <div className="section">
     <div className="container">
       <h1 className="title">Product Categories</h1>
 
@@ -25,31 +57,20 @@ export const App = () => (
             <a
               data-cy="FilterAllUsers"
               href="#/"
+
             >
               All
             </a>
-
-            <a
-              data-cy="FilterUser"
-              href="#/"
-            >
-              User 1
-            </a>
-
-            <a
-              data-cy="FilterUser"
-              href="#/"
-              className="is-active"
-            >
-              User 2
-            </a>
-
-            <a
-              data-cy="FilterUser"
-              href="#/"
-            >
-              User 3
-            </a>
+            {usersFromServer.map(user => (
+              <a 
+                key={user.id}
+                data-cy="FilterUser"
+                href="#/"
+                onClick={() => {setSelectedUser(user)}}
+              >
+                {user.name}
+              </a>
+            ))}
           </p>
 
           <div className="panel-block">
@@ -59,7 +80,10 @@ export const App = () => (
                 type="text"
                 className="input"
                 placeholder="Search"
-                value="qwe"
+                value={query}
+                onChange={(event) => {
+                  setQuery(event.target.value);
+                }}
               />
 
               <span className="icon is-left">
@@ -68,11 +92,14 @@ export const App = () => (
 
               <span className="icon is-right">
                 {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
-                <button
-                  data-cy="ClearButton"
-                  type="button"
-                  className="delete"
-                />
+                {query && (
+                    <button
+                      data-cy="ClearButton"
+                      type="button"
+                      className="delete"
+                      onClick={() => setQuery('')}
+                    />
+                  )}
               </span>
             </p>
           </div>
@@ -86,36 +113,16 @@ export const App = () => (
               All
             </a>
 
-            <a
+            {categoriesFromServer.map(category => (
+              <a
               data-cy="Category"
               className="button mr-2 my-1 is-info"
               href="#/"
             >
-              Category 1
+              {category.title}
             </a>
+            ))}
 
-            <a
-              data-cy="Category"
-              className="button mr-2 my-1"
-              href="#/"
-            >
-              Category 2
-            </a>
-
-            <a
-              data-cy="Category"
-              className="button mr-2 my-1 is-info"
-              href="#/"
-            >
-              Category 3
-            </a>
-            <a
-              data-cy="Category"
-              className="button mr-2 my-1"
-              href="#/"
-            >
-              Category 4
-            </a>
           </div>
 
           <div className="panel-block">
@@ -123,6 +130,7 @@ export const App = () => (
               data-cy="ResetAllButton"
               href="#/"
               className="button is-link is-outlined is-fullwidth"
+              onClick={() => resetFilters()}
             >
               Reset all filters
             </a>
@@ -192,56 +200,27 @@ export const App = () => (
           </thead>
 
           <tbody>
+          {products.map(product => (
             <tr data-cy="Product">
               <td className="has-text-weight-bold" data-cy="ProductId">
-                1
+                {product.id}
               </td>
 
-              <td data-cy="ProductName">Milk</td>
-              <td data-cy="ProductCategory">🍺 - Drinks</td>
+              <td data-cy="ProductName">{product.name}</td>
+              <td data-cy="ProductCategory"> {`${product.category.icon} - ${product.category.title}`} </td>
 
               <td
                 data-cy="ProductUser"
                 className="has-text-link"
               >
-                Max
+                {product.user.name}
               </td>
             </tr>
-
-            <tr data-cy="Product">
-              <td className="has-text-weight-bold" data-cy="ProductId">
-                2
-              </td>
-
-              <td data-cy="ProductName">Bread</td>
-              <td data-cy="ProductCategory">🍞 - Grocery</td>
-
-              <td
-                data-cy="ProductUser"
-                className="has-text-danger"
-              >
-                Anna
-              </td>
-            </tr>
-
-            <tr data-cy="Product">
-              <td className="has-text-weight-bold" data-cy="ProductId">
-                3
-              </td>
-
-              <td data-cy="ProductName">iPhone</td>
-              <td data-cy="ProductCategory">💻 - Electronics</td>
-
-              <td
-                data-cy="ProductUser"
-                className="has-text-link"
-              >
-                Roma
-              </td>
-            </tr>
+          ))}
           </tbody>
         </table>
       </div>
     </div>
   </div>
-);
+  );
+}
