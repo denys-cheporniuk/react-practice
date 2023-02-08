@@ -6,32 +6,38 @@ import usersFromServer from './api/users';
 import categoriesFromServer from './api/categories';
 import productsFromServer from './api/products';
 
-const categories = categoriesFromServer.map(category => ({
-  ...category,
-  products: productsFromServer.filter(
-    product => product.categoryId === category.id,
-  ),
-  users: usersFromServer.find(user => user.id === category.ownerId),
-}));
+const products = productsFromServer.map((product) => {
+  const categories = categoriesFromServer.find(
+    category => category.id === product.categoryId,
+  );
+  const users = usersFromServer.find(user => user.id === categories.ownerId);
+
+  return {
+    ...product,
+    categories,
+    users,
+  };
+});
 
 export const App = () => {
   const [query, setQuery] = useState('');
-  const [isUserSelected, setUserSelected] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(0);
 
   const handleQueryInput = (event) => {
     setQuery(event.target.value);
   };
 
   const selectUser = () => {
-    setUserSelected(true);
+    setSelectedUser(true);
   };
 
   const clearSelected = () => {
-    setUserSelected();
+    setSelectedUser();
   };
 
   const clearAllFilters = () => {
-
+    setQuery('');
+    setSelectedUser(0);
   };
 
   return (
@@ -57,7 +63,7 @@ export const App = () => {
                   data-cy="FilterUser"
                   href="#/"
                   className={classNames({
-                    'is-active': isUserSelected,
+                    'is-active': selectedUser === user.id,
                   })}
                   value={user.id}
                   key={user.id}
@@ -212,17 +218,17 @@ export const App = () => {
             </thead>
 
             <tbody>
-              {categories.map(category => (
+              {products.map(product => (
                 <tr data-cy="Product">
                   <td className="has-text-weight-bold" data-cy="ProductId">
-                    {category.products.id}
+                    {product.id}
                   </td>
 
-                  <td data-cy="ProductName">{category.name}</td>
+                  <td data-cy="ProductName">{product.name}</td>
                   <td data-cy="ProductCategory">
-                    {category.icon}
+                    {product.categories.icon}
                     {' - '}
-                    {category.name}
+                    {product.categories.title}
                   </td>
 
                   <td
@@ -230,11 +236,11 @@ export const App = () => {
                     className={classNames(
                       'has-text-link',
                       {
-                        'has-text-danger': category.users.sex === 'f',
+                        'has-text-danger': product.users.sex === 'f',
                       },
                     )}
                   >
-                    {category.users.name}
+                    {product.users.name}
                   </td>
                 </tr>
               ))}
