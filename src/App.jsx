@@ -27,6 +27,10 @@ export const App = () => {
     setQuery(event.target.value);
   };
 
+  const clearQuery = () => {
+    setQuery('');
+  };
+
   const selectUser = () => {
     setSelectedUser(true);
   };
@@ -96,6 +100,7 @@ export const App = () => {
                       data-cy="ClearButton"
                       type="button"
                       className="delete"
+                      onClick={clearQuery}
                     />
                   )}
                 </span>
