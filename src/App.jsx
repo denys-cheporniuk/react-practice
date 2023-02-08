@@ -21,15 +21,24 @@ export const App = () => {
   const [visibleProducts, setVisibleProducts] = useState([...products]);
   const [activeUserId, serActiveUserId] = useState(0);
   const [searchParam, setSearchParam] = useState('');
+  const [categories, setCategories] = useState([]);
+
+  const filterByCategories = (id) => {
+    setCategories(prevState => ([...prevState, id]));
+    // eslint-disable-next-line no-console
+    console.log(categories);
+
+    setVisibleProducts([...products]
+      .filter(product => product.category.id === categories
+        .find(c => c === id)));
+  };
 
   const searchByProductName = (value) => {
-    let productToFilter = [...products];
-
     if (activeUserId !== 0) {
-      productToFilter = productToFilter.filter(p => p.user.id === activeUserId);
+      filterByName(activeUserId);
     }
 
-    return productToFilter.filter((product) => {
+    return visibleProducts.filter((product) => {
       const searchValue = value.toLowerCase();
       const productName = product.name.toLowerCase();
 
@@ -157,36 +166,19 @@ export const App = () => {
                 All
               </a>
 
-              <a
-                data-cy="Category"
-                className="button mr-2 my-1 is-info"
-                href="#/"
-              >
-                Category 1
-              </a>
-
-              <a
-                data-cy="Category"
-                className="button mr-2 my-1"
-                href="#/"
-              >
-                Category 2
-              </a>
-
-              <a
-                data-cy="Category"
-                className="button mr-2 my-1 is-info"
-                href="#/"
-              >
-                Category 3
-              </a>
-              <a
-                data-cy="Category"
-                className="button mr-2 my-1"
-                href="#/"
-              >
-                Category 4
-              </a>
+              {categoriesFromServer.map(category => (
+                <a
+                  key={category.id}
+                  data-cy="Category"
+                  className="button mr-2 my-1 is-info"
+                  href="#/"
+                  onClick={() => {
+                    filterByCategories(category.id);
+                  }}
+                >
+                  {category.title}
+                </a>
+              ))}
             </div>
 
             <div className="panel-block">
