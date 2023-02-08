@@ -24,14 +24,29 @@ const products = productsFromServer.map((product) => {
 export const App = () => {
   const [currentUserName, setCurrentUserName] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState([]);
+
   let visibleProducts = products;
 
   const handleInput = (event) => {
     setSearchQuery(event.target.value);
   };
 
+  const toogleSelectedCategory = (categoryTitle) => {
+    if (selectedCategory.includes(categoryTitle)) {
+      setSelectedCategory(
+        selectedCategory.filter(category => category !== categoryTitle),
+      );
+    } else {
+      setSelectedCategory(prevSelected => [
+        ...prevSelected,
+        categoryTitle,
+      ]);
+    }
+  };
+
   if (currentUserName) {
-    visibleProducts = products.filter(product => (
+    visibleProducts = visibleProducts.filter(product => (
       product.user.name === currentUserName
     ));
   }
@@ -39,8 +54,14 @@ export const App = () => {
   if (searchQuery) {
     const queryInLowerCase = searchQuery.toLocaleLowerCase();
 
-    visibleProducts = products.filter(product => (
+    visibleProducts = visibleProducts.filter(product => (
       product.name.toLocaleLowerCase().includes(queryInLowerCase)
+    ));
+  }
+
+  if (selectedCategory.length > 0) {
+    visibleProducts = visibleProducts.filter(product => (
+      selectedCategory.includes(product.category.title)
     ));
   }
 
@@ -68,6 +89,7 @@ export const App = () => {
                   href="#/"
                   className={cn({ 'is-active': currentUserName === user.name })}
                   onClick={() => setCurrentUserName(user.name)}
+                  key={user.id}
                 >
                   {user.name}
                 </a>
@@ -108,41 +130,26 @@ export const App = () => {
               <a
                 href="#/"
                 data-cy="AllCategories"
-                className="button is-success mr-6 is-outlined"
+                onClick={() => setSelectedCategory([])}
+                className={cn('button is-success mr-6', {
+                  'is-outlined': selectedCategory.length === 0,
+                })}
               >
                 All
               </a>
-
-              <a
-                data-cy="Category"
-                className="button mr-2 my-1 is-info"
-                href="#/"
-              >
-                Category 1
-              </a>
-
-              <a
-                data-cy="Category"
-                className="button mr-2 my-1"
-                href="#/"
-              >
-                Category 2
-              </a>
-
-              <a
-                data-cy="Category"
-                className="button mr-2 my-1 is-info"
-                href="#/"
-              >
-                Category 3
-              </a>
-              <a
-                data-cy="Category"
-                className="button mr-2 my-1"
-                href="#/"
-              >
-                Category 4
-              </a>
+              {categoriesFromServer.map(category => (
+                <a
+                  data-cy="Category"
+                  className={cn('button mr-2 my-1', {
+                    'is-info': selectedCategory.includes(category.title),
+                  })}
+                  href="#/"
+                  onClick={() => toogleSelectedCategory(category.title)}
+                  key={category.id}
+                >
+                  {category.title}
+                </a>
+              ))}
             </div>
 
             <div className="panel-block">
