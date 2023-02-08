@@ -25,19 +25,41 @@ export const App = () => {
 const [visibleProducts, setVisibleProducts] = useState(products);
 
 const filteredByName = userId => {
-  const filteredProducts = products.filter(pt => pt.user[0].id === userId);
-  setVisibleProducts(filteredProducts);
+
+  if(userId === null) {
+    setVisibleProducts(products);
+  } else {
+    const filteredProducts = products.filter(pt => pt.user[0].id === userId);
+    setVisibleProducts(filteredProducts);
+  }
 };
 
 const handleInput = (event: ChangeEvent) => {
+
+
+
   const productName = event.target.value;
 
-  const filteredProducts = products.filter(pt => pt.product.name.toLowerCase().includes(productName.toLowerCase()) );
 
-  setVisibleProducts(filteredProducts);
+    const filteredProducts = products.filter(pt => pt.product.name.toLowerCase().includes(productName.toLowerCase()));
+
+    if(filteredProducts.length > 0) {
+      setVisibleProducts(filteredProducts);
+    } else {
+      setVisibleProducts([]);
+    }
+
 }
 
+const resetAll = () => {
+  filteredByName(null);
+};
+
+
+
+
 return (
+
   <div className="section">
     <div className="container">
       <h1 className="title">Product Categories</h1>
@@ -50,31 +72,11 @@ return (
             <a
               data-cy="FilterAllUsers"
               href="#/"
+              onClick={() => filteredByName(null)}
             >
               All
             </a>
 
-            {/* <a
-              data-cy="FilterUser"
-              href="#/"
-            >
-              User 1
-            </a>
-
-            <a
-              data-cy="FilterUser"
-              href="#/"
-              className="is-active"
-            >
-              User 2
-            </a>
-
-            <a
-              data-cy="FilterUser"
-              href="#/"
-            >
-              User 3
-            </a> */}
           {usersFromServer.map((user) => (
            <a
            data-cy="FilterUser"
@@ -159,6 +161,7 @@ return (
               data-cy="ResetAllButton"
               href="#/"
               className="button is-link is-outlined is-fullwidth"
+              onClick={() => resetAll()}
             >
               Reset all filters
             </a>
@@ -228,7 +231,12 @@ return (
           </thead>
 
           <tbody>
-          {visibleProducts.map((product) => (
+
+
+          {
+
+          visibleProducts.length > 0 ?
+          (visibleProducts.map((product) => (
             <tr data-cy="Product">
             <td
               className="has-text-weight-bold"
@@ -247,7 +255,18 @@ return (
               {product.user[0].name}
             </td>
           </tr>
-          ))}
+          ))) : (
+        <tr data-cy="Product">
+            <td
+            className="has-text-weight-bold"
+            >
+              {'No results'}
+            </td>
+
+          </tr>
+          )
+
+          }
 
             {/* <tr data-cy="Product">
               <td className="has-text-weight-bold" data-cy="ProductId">
