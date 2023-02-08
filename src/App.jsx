@@ -1,16 +1,23 @@
 import React from 'react';
 import './App.scss';
 
-// import usersFromServer from './api/users';
-// import categoriesFromServer from './api/categories';
-// import productsFromServer from './api/products';
+import usersFromServer from './api/users';
+import categoriesFromServer from './api/categories';
+import productsFromServer from './api/products';
 
-// const products = productsFromServer.map((product) => {
-//   const category = null; // find by product.categoryId
-//   const user = null; // find by category.ownerId
+const products = productsFromServer.map((product) => {
+  const category = categoriesFromServer.filter(cat => cat.id === product.categoryId);
+  const user = usersFromServer.filter(us => us.id === category[0].ownerId);
 
-//   return null;
-// });
+  return {
+    product,
+    category,
+    user,
+  };
+});
+
+// const filteredPoduct = product.filter(product => product.user.id === );
+// console.log(filterUsers);
 
 export const App = () => (
   <div className="section">
@@ -29,7 +36,7 @@ export const App = () => (
               All
             </a>
 
-            <a
+            {/* <a
               data-cy="FilterUser"
               href="#/"
             >
@@ -49,7 +56,16 @@ export const App = () => (
               href="#/"
             >
               User 3
-            </a>
+            </a> */}
+              {usersFromServer.map((user) => (
+           <a
+           data-cy="FilterUser"
+           href="#/"
+         >
+           {user.name}
+         </a>
+          ))}
+
           </p>
 
           <div className="panel-block">
@@ -192,7 +208,28 @@ export const App = () => (
           </thead>
 
           <tbody>
+          {products.map((product) => (
             <tr data-cy="Product">
+            <td
+              className="has-text-weight-bold"
+              data-cy="ProductId"
+              key={product.id}>
+              {product.product.id}
+            </td>
+
+            <td data-cy="ProductName">{product.product.name}</td>
+            <td data-cy="ProductCategory">{`${product.category[0].icon} - ${product.category[0].title}`}</td>
+
+            <td
+              data-cy="ProductUser"
+              className="has-text-link"
+            >
+              {product.user[0].name}
+            </td>
+          </tr>
+          ))}
+
+            {/* <tr data-cy="Product">
               <td className="has-text-weight-bold" data-cy="ProductId">
                 1
               </td>
@@ -238,7 +275,7 @@ export const App = () => (
               >
                 Roma
               </td>
-            </tr>
+            </tr> */}
           </tbody>
         </table>
       </div>
